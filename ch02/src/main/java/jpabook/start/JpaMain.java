@@ -12,8 +12,7 @@ public class JpaMain {
     public static void main(String[] args) {
         EntityManagerFactory emf =
             Persistence.createEntityManagerFactory("jpabook"); // 유닛 이름이 jpabook인 설정 정보 조회해서 매니저 팩토리 생성
-        // 매니저 팩토리 생성 비용은 크기 때문에 애플리케이션 전체에서 딱 한 번만 생성하고 공유해서 사용해야 함
-        EntityManager em = emf.createEntityManager(); // 엔티티 매니저 생성 (역할 - 수정/등록/삭제/조회) 데이터베이스 커넥션과 밀접한 관계가 있으므로 스레드 간에 공유하거나 재사용 X
+        EntityManager em = emf.createEntityManager(); // 엔티티 매니저 생성 (역할 - 수정/등록/삭제/조회) 데이터베이스 커넥션과 밀접한 관계가 있으므로 스레드 간에 공유하거나 재사용
         EntityTransaction tx = em.getTransaction();
 
         try {  // 트랜잭션 관리
@@ -42,9 +41,10 @@ public class JpaMain {
         System.out.println("findMember=" + findMember.getUsername() + ", age=" + findMember.getAge());
 
         TypedQuery<Member> query = em.createQuery("select m from Member m", Member.class); // JPQL은 엔티티 객체를 대상으로 쿼리한다. Member는 테이블이 아닌 회원 엔티티 객체를 의미한다.
+        // 식별자를 기준으로 조회하는 find() 메소드를 호출할 때는 플러시가 실행되지 않는다.
         List<Member> members = query.getResultList();
         System.out.println("members.size=" + members.size());
 
-        em.remove(member);
+        em.remove(member); // 엔티티 객체에서 삭제된 상태
     }
 }
